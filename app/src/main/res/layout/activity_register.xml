@@ -41,7 +41,7 @@
             app:layout_constraintTop_toBottomOf="@id/registerImg"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="25dp"
             android:fontFamily="@font/poppins_semibold"
             android:textColor="#FFFFFF"
             android:text="Continue with Google"
@@ -61,18 +61,19 @@
             app:layout_constraintTop_toBottomOf="@id/googleSignInButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="15dp" />
 
         <EditText
             android:id="@+id/emailInput"
             android:layout_width="0dp"
             android:layout_height="55dp"
             android:hint="Enter your email"
+            android:inputType="textEmailAddress"
             android:fontFamily="@font/poppins_semibold"
             app:layout_constraintTop_toBottomOf="@id/orSeparator"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:background="@drawable/rounded_edittext"
             android:paddingLeft="20dp"
             android:paddingTop="10dp"
@@ -86,7 +87,6 @@
             android:layout_width="0dp"
             android:layout_height="55dp"
             android:hint="Enter your password"
-
             android:layout_marginBottom="40dp"
             android:fontFamily="@font/poppins_semibold"
             android:inputType="textPassword"
@@ -106,7 +106,7 @@
             android:id="@+id/confirmpasswordInput"
             android:layout_width="0dp"
             android:layout_height="55dp"
-            android:hint="Enter your password"
+            android:hint="Confirm your password"
 
             android:layout_marginBottom="40dp"
             android:fontFamily="@font/poppins_semibold"
@@ -130,7 +130,7 @@
             android:id="@+id/registerButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:text="Register"
             android:textColor="#FFFFFF"
             android:fontFamily="@font/poppins_semibold"
             app:layout_constraintTop_toBottomOf="@id/confirmpasswordInput"
