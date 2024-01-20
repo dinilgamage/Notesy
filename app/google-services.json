@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "323989455325",
+    "project_id": "notesy-7943d",
+    "storage_bucket": "notesy-7943d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:323989455325:android:d06bf2fc28529348fcf634",
+        "android_client_info": {
+          "package_name": "com.abc.notesy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnkfBof6RmZmg7Gseb2auk9QBbx5-3NnE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

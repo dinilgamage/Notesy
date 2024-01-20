@@ -11,11 +11,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class Register extends AppCompatActivity {
 
     private EditText mregisteremail,mregisterpassword,mregisterconfirmpassword;
     private Button mregisterbutton;
     private TextView mgotologin;
+
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,8 @@ public class Register extends AppCompatActivity {
         mregisterconfirmpassword=findViewById(R.id.confirmpasswordInput);
         mregisterbutton=findViewById(R.id.registerButton);
         mgotologin=findViewById(R.id.loginPrompt);
+
+        firebaseAuth=FirebaseAuth.getInstance();
 
         mgotologin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,9 +61,37 @@ public class Register extends AppCompatActivity {
                 else if(!password.equals(confirmpassword)){
                     Toast.makeText(getApplicationContext(),"Passwords do not match", Toast.LENGTH_SHORT).show();
                 }else{
-                    //todo register user
+                    firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
+                        if(task.isSuccessful()){
+                            Toast.makeText(getApplicationContext(),"Registration Successful", Toast.LENGTH_SHORT).show();
+                            sendEmailVerification();
+                            Intent intent=new Intent(Register.this,Login.class);
+                            startActivity(intent);
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Registration Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
+    }
+
+    private void sendEmailVerification(){
+        FirebaseUser firebaseUser=firebaseAuth.getCurrentUser();
+        if (firebaseUser!=null) {
+            firebaseUser.sendEmailVerification().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Verification Email Sent", Toast.LENGTH_SHORT).show();
+                    firebaseAuth.signOut();
+                    finish();
+                    startActivity(new Intent(Register.this, Login.class));
+                } else {
+                    Toast.makeText(getApplicationContext(), "Verification Email Not Sent", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "No authenticated user found", Toast.LENGTH_SHORT).show();
+        }
     }
 }
