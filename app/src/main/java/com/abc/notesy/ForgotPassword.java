@@ -2,11 +2,14 @@ package com.abc.notesy;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -29,6 +32,18 @@ public class ForgotPassword extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+
+            boolean isDarkTheme = true;
+
+            // Set navigation bar color based on the theme or condition
+            if (isDarkTheme) {
+                window.setNavigationBarColor(ContextCompat.getColor(this, R.color.primary_dark));
+            } else {
+                window.setNavigationBarColor(ContextCompat.getColor(this, R.color.primary_light));
+            }
         }
         setContentView(R.layout.activity_forgot_password);
 
