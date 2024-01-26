@@ -121,8 +121,6 @@ public class Register extends AppCompatActivity {
                         if(task.isSuccessful()){
                             Toast.makeText(getApplicationContext(),"Registration Successful", Toast.LENGTH_SHORT).show();
                             sendEmailVerification();
-                            Intent intent=new Intent(Register.this,Login.class);
-                            startActivity(intent);
                         }else{
                             Toast.makeText(getApplicationContext(),"Registration Failed", Toast.LENGTH_SHORT).show();
                         }
