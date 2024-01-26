@@ -88,6 +88,7 @@ public class Login extends AppCompatActivity {
         mgooglesigninbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                showLoadingDialog();
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             }
@@ -156,6 +157,7 @@ public class Login extends AppCompatActivity {
             firebaseAuthWithGoogle(account.getIdToken());
         } catch (ApiException e) {
             Toast.makeText(Login.this, "Google sign in failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            dismissLoadingDialog();
         }
     }
 
