@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.app.Dialog;
 import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +35,8 @@ public class Login extends AppCompatActivity {
     private EditText mloginemail, mloginpassword;
     private Button mloginbutton, mgooglesigninbutton;
     private TextView mgotoregister, mforgotpassword;
+    private Dialog loadingDialog;
+
 
     private FirebaseAuth firebaseAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -68,6 +71,10 @@ public class Login extends AppCompatActivity {
         mgotoregister = findViewById(R.id.registerPrompt);
         mforgotpassword = findViewById(R.id.forgotPassword);
         mgooglesigninbutton = findViewById(R.id.googleSignInButton);
+
+        loadingDialog = new Dialog(this);
+        loadingDialog.setContentView(R.layout.dialog_loading);
+        loadingDialog.setCancelable(false);
 
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -116,9 +123,11 @@ public class Login extends AppCompatActivity {
                 if (email.isEmpty() || password.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "All fields are required", Toast.LENGTH_SHORT).show();
                 } else {
+                    showLoadingDialog();
                     firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+                            dismissLoadingDialog();
                             if (task.isSuccessful()) {
                                 checkEmailVerification();
                             } else {
@@ -188,6 +197,17 @@ public class Login extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), "Verify your email", Toast.LENGTH_SHORT).show();
             firebaseAuth.signOut();
+        }
+    }
+    private void showLoadingDialog() {
+        if (loadingDialog != null && !loadingDialog.isShowing()) {
+            loadingDialog.show();
+        }
+    }
+
+    private void dismissLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
         }
     }
 }

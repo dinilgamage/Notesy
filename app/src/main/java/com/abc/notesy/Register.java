@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.app.Dialog;
 import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +36,8 @@ public class Register extends AppCompatActivity {
     private EditText mregisteremail,mregisterpassword,mregisterconfirmpassword;
     private Button mregisterbutton, mgooglesigninbutton;
     private TextView mgotologin;
+
+    private Dialog loadingDialog;
 
     private FirebaseAuth firebaseAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -68,6 +71,10 @@ public class Register extends AppCompatActivity {
         mregisterbutton=findViewById(R.id.registerButton);
         mgotologin=findViewById(R.id.loginPrompt);
         mgooglesigninbutton = findViewById(R.id.googleSignInButton);
+
+        loadingDialog = new Dialog(this);
+        loadingDialog.setContentView(R.layout.dialog_loading);
+        loadingDialog.setCancelable(false);
 
 
         firebaseAuth=FirebaseAuth.getInstance();
@@ -108,7 +115,9 @@ public class Register extends AppCompatActivity {
                 else if(!password.equals(confirmpassword)){
                     Toast.makeText(getApplicationContext(),"Passwords do not match", Toast.LENGTH_SHORT).show();
                 }else{
+                    showLoadingDialog();
                     firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
+                        dismissLoadingDialog();
                         if(task.isSuccessful()){
                             Toast.makeText(getApplicationContext(),"Registration Successful", Toast.LENGTH_SHORT).show();
                             sendEmailVerification();
@@ -185,6 +194,18 @@ public class Register extends AppCompatActivity {
         } else {
             // User is signed out
             Toast.makeText(Register.this, "Please sign in to continue.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showLoadingDialog() {
+        if (loadingDialog != null && !loadingDialog.isShowing()) {
+            loadingDialog.show();
+        }
+    }
+
+    private void dismissLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
         }
     }
 }

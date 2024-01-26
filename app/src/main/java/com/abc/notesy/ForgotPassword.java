@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.app.Dialog;
 import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +29,8 @@ public class ForgotPassword extends AppCompatActivity {
     private Button mpasswordrecoverbutton;
     private TextView mgobacktologin;
 
-    private ProgressBar progressBar;
+
+    private Dialog loadingDialog;
 
 
     FirebaseAuth firebaseAuth;
@@ -56,7 +58,10 @@ public class ForgotPassword extends AppCompatActivity {
         mpasswordrecoverbutton=findViewById(R.id.recoverButton);
         mforgotpasswordemail=findViewById(R.id.emailInput);
         mgobacktologin=findViewById(R.id.backToLogin);
-        progressBar = findViewById(R.id.progressBar);
+
+        loadingDialog = new Dialog(this);
+        loadingDialog.setContentView(R.layout.dialog_loading);
+        loadingDialog.setCancelable(false);
 
 
         firebaseAuth=FirebaseAuth.getInstance();
@@ -78,13 +83,13 @@ public class ForgotPassword extends AppCompatActivity {
                 }
                 else
                 {
-                    progressBar.setVisibility(View.VISIBLE);
+                    showLoadingDialog();
                     firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>()
                     {
                         @Override
                         public void onComplete(@NonNull Task<Void> task)
                         {
-                                progressBar.setVisibility(View.GONE);
+                                dismissLoadingDialog();
                                 if(task.isSuccessful()){
                                     Toast.makeText(getApplicationContext(),"Password reset email sent",Toast.LENGTH_SHORT).show();
                                     finish();
@@ -100,5 +105,16 @@ public class ForgotPassword extends AppCompatActivity {
             }
         });
 
+    }
+    private void showLoadingDialog() {
+        if (loadingDialog != null && !loadingDialog.isShowing()) {
+            loadingDialog.show();
+        }
+    }
+
+    private void dismissLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+        }
     }
 }
