@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,9 +51,9 @@ public class Register extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
 
-            boolean isDarkTheme = true;
+            UiModeManager uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+            boolean isDarkTheme = (uiModeManager != null && uiModeManager.getNightMode() == UiModeManager.MODE_NIGHT_YES);
 
-            // Set navigation bar color based on the theme or condition
             if (isDarkTheme) {
                 window.setNavigationBarColor(ContextCompat.getColor(this, R.color.primary_dark));
             } else {
