@@ -17,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -69,6 +70,7 @@ public class AddFragment extends Fragment {
                     showLoadingDialog();
                     DocumentReference documentReference = firebaseFirestore.collection("notes").document(firebaseUser.getUid()).collection("myNotes").document();
                     Map<String, Object> note = new HashMap<>();
+                    note.put("createdAt", FieldValue.serverTimestamp());
                     note.put("title", title);
                     note.put("content", content);
                     documentReference.set(note).addOnSuccessListener(new OnSuccessListener<Void>() {
