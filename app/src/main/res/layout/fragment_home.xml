@@ -6,13 +6,11 @@
     android:background="?attr/colorPrimary"
     tools:context=".HomeFragment">
 
-    <view class="androidx.appcompat.app.AlertController$RecycleListView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recyclerView"
         android:scrollbars="vertical"
-        >
-
-    </view>
+        />
 
 </RelativeLayout>
