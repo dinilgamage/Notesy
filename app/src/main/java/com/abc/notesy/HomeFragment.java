@@ -21,6 +21,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -80,14 +81,22 @@ public class HomeFragment extends Fragment {
                 holder.notelayout.setBackgroundColor(holder.itemView.getResources().getColor(colorcode, null));
                 holder.noteTitle.setText(model.getTitle());
                 holder.noteContent.setText(model.getContent());
+
+                String docId = noteAdapter.getSnapshots().getSnapshot(position).getId();
                 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ViewFragment viewFragment = new ViewFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("title", model.getTitle());
+                        bundle.putString("content", model.getContent());
+                        bundle.putString("noteId", docId);
+                        viewFragment.setArguments(bundle);
 
                         getParentFragmentManager().beginTransaction()
                                 .replace(R.id.frameLayout, viewFragment)
+                                .addToBackStack(null)
                                 .commit();
                     }
                 });
@@ -99,16 +108,28 @@ public class HomeFragment extends Fragment {
                         popupMenu.setGravity(Gravity.END);
                         popupMenu.getMenu().add("Edit").setOnMenuItemClickListener(item -> {
                             EditFragment editFragment = new EditFragment();
+                            Bundle bundle = new Bundle();
+                            bundle.putString("title", model.getTitle());
+                            bundle.putString("content", model.getContent());
+                            bundle.putString("noteId", docId);
+                            editFragment.setArguments(bundle);
 
                             getParentFragmentManager().beginTransaction()
                                     .replace(R.id.frameLayout, editFragment)
+                                    .addToBackStack(null)
                                     .commit();
                             return false;
                         });
                         popupMenu.getMenu().add("Delete").setOnMenuItemClickListener(item -> {
-                            Toast.makeText(view.getContext(), "Delete Clicked", Toast.LENGTH_SHORT).show();
+                            DocumentReference documentReference = firebaseFirestore.collection("notes").document(firebaseUser.getUid()).collection("myNotes").document(docId);
+                            documentReference.delete().addOnSuccessListener(unused -> {
+                                Toast.makeText(view.getContext(), "Note Deleted", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(view.getContext(), "Failed To Delete", Toast.LENGTH_SHORT).show();
+                            });
                             return false;
                         });
+                        popupMenu.show();
                     }
                 });
             }

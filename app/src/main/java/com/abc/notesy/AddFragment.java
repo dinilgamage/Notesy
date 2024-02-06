@@ -78,7 +78,10 @@ public class AddFragment extends Fragment {
                         public void onSuccess(Void unused) {
                             dismissLoadingDialog();
                             Toast.makeText(getActivity(), "Note Added", Toast.LENGTH_SHORT).show();
-                            getParentFragmentManager().popBackStack();
+                            HomeFragment homeFragment = new HomeFragment();
+                            getParentFragmentManager().beginTransaction()
+                                    .replace(R.id.frameLayout, homeFragment)
+                                    .commit();
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
