@@ -7,11 +7,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -19,6 +23,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 
 public class HomeFragment extends Fragment {
@@ -66,8 +74,43 @@ public class HomeFragment extends Fragment {
         noteAdapter = new FirestoreRecyclerAdapter<firebasemodel, NoteViewHolder>(allusernotes) {
             @Override
             protected void onBindViewHolder(@NonNull NoteViewHolder holder, int position, firebasemodel model) {
+
+                ImageView popupbutton = holder.itemView.findViewById(R.id.menupopbutton);
+                int colorcode = getRandomColor();
+                holder.notelayout.setBackgroundColor(holder.itemView.getResources().getColor(colorcode, null));
                 holder.noteTitle.setText(model.getTitle());
                 holder.noteContent.setText(model.getContent());
+                
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ViewFragment viewFragment = new ViewFragment();
+
+                        getParentFragmentManager().beginTransaction()
+                                .replace(R.id.frameLayout, viewFragment)
+                                .commit();
+                    }
+                });
+
+                popupbutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+                        popupMenu.setGravity(Gravity.END);
+                        popupMenu.getMenu().add("Edit").setOnMenuItemClickListener(item -> {
+                            EditFragment editFragment = new EditFragment();
+
+                            getParentFragmentManager().beginTransaction()
+                                    .replace(R.id.frameLayout, editFragment)
+                                    .commit();
+                            return false;
+                        });
+                        popupMenu.getMenu().add("Delete").setOnMenuItemClickListener(item -> {
+                            Toast.makeText(view.getContext(), "Delete Clicked", Toast.LENGTH_SHORT).show();
+                            return false;
+                        });
+                    }
+                });
             }
 
             @NonNull
@@ -98,5 +141,23 @@ public class HomeFragment extends Fragment {
         if(noteAdapter != null){
             noteAdapter.stopListening();
         }
+    }
+
+    private int getRandomColor() {
+        List<Integer> colorcode = new ArrayList<>();
+        colorcode.add(R.color.gray);
+        colorcode.add(R.color.pink);
+        colorcode.add(R.color.skyblue);
+        colorcode.add(R.color.color1);
+        colorcode.add(R.color.lightgreen);
+        colorcode.add(R.color.color2);
+        colorcode.add(R.color.color3);
+        colorcode.add(R.color.color4);
+        colorcode.add(R.color.color5);
+        colorcode.add(R.color.green);
+
+        Random randomColor = new Random();
+        int number = randomColor.nextInt(colorcode.size());
+        return colorcode.get(number);
     }
 }

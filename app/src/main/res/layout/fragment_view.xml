@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/colorPrimary"
+    tools:context=".ViewFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:textSize="20sp"
+        android:fontFamily="@font/poppins_bold"
+        android:background="@drawable/rounded_edittext"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="15dp"
+        android:id="@+id/titleofnoteview"/>
+
+    <TextView
+        android:id="@+id/descriptionofnoteview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/titleofnoteview"
+        android:layout_margin="15dp"
+        android:background="@drawable/rounded_edittext"
+        android:fontFamily="@font/poppins_semibold"
+        android:gravity="top|left"
+        android:padding="12dp"
+        android:textSize="15sp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:layout_marginRight="30dp"
+        android:gravity="bottom|end"
+        android:id="@+id/gotoeditNote"
+        android:src="@drawable/round_edit_24"
+        app:tint="@color/primary_light"
+        app:maxImageSize="40dp"
+        />
+
+</RelativeLayout>
