@@ -1,16 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/colorPrimary"
 
     tools:context=".AddFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:textSize="20sp"
+        android:fontFamily="@font/poppins_bold"
+        android:hint="Enter Title..."
+        android:background="@drawable/rounded_edittext"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="15dp"
+        android:id="@+id/createtitleofnote"/>
+
+    <EditText
+        android:id="@+id/createdescriptionofnote"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_below="@id/createtitleofnote"
+        android:layout_margin="15dp"
+        android:background="@drawable/rounded_edittext"
+        android:fontFamily="@font/poppins_semibold"
+        android:gravity="top|left"
+        android:hint="Take your notes..."
+        android:padding="12dp"
+        android:textSize="15sp" />
+    
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:layout_marginRight="30dp"
+        android:gravity="bottom|end"
+        android:id="@+id/saveNote"
+        android:src="@drawable/round_cloud_upload_24"
+        app:tint="@color/primary_light"
+        app:maxImageSize="40dp"
+        />
 
-</FrameLayout>
+
+
+
+</RelativeLayout>
+
