@@ -1,16 +1,21 @@
 package com.abc.notesy;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -108,18 +113,54 @@ public class HomeFragment extends Fragment {
                 deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // Implement delete functionality here
-                        DocumentReference documentReference = firebaseFirestore.collection("notes")
-                                .document(firebaseUser.getUid())
-                                .collection("myNotes")
-                                .document(docId);
-                        documentReference.delete().addOnSuccessListener(unused -> {
-                            Toast.makeText(view.getContext(), "Note Deleted", Toast.LENGTH_SHORT).show();
-                        }).addOnFailureListener(e -> {
-                            Toast.makeText(view.getContext(), "Failed To Delete", Toast.LENGTH_SHORT).show();
+                        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.custom_dialog_layout, null);
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setView(dialogView);
+
+                        TextView dialogTitle = dialogView.findViewById(R.id.dialog_title);
+                        TextView dialogMessage = dialogView.findViewById(R.id.dialog_message);
+
+                        TextView dialogButton = dialogView.findViewById(R.id.dialog_button);
+
+                        TextView dialogCancelButton = dialogView.findViewById(R.id.dialog_cancel_button);
+
+                        dialogTitle.setText("Confirm Deletion");
+                        dialogMessage.setText("Are you sure you want to delete this note?");
+
+                        AlertDialog dialog = builder.create();
+
+                        dialog.show();
+
+                        dialog.getWindow().setBackgroundDrawableResource(R.drawable.rounded_dialog_background);
+
+                        dialogButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DocumentReference documentReference = firebaseFirestore.collection("notes")
+                                        .document(firebaseUser.getUid())
+                                        .collection("myNotes")
+                                        .document(docId);
+                                documentReference.delete().addOnSuccessListener(unused -> {
+                                    Toast.makeText(getContext(), "Note Deleted", Toast.LENGTH_SHORT).show();
+                                }).addOnFailureListener(e -> {
+                                    Toast.makeText(getContext(), "Failed To Delete", Toast.LENGTH_SHORT).show();
+                                });
+                                dialog.dismiss();
+                            }
+                        });
+
+                        dialogCancelButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
                         });
                     }
                 });
+
+
+
 
 
 //                popupbutton.setOnClickListener(new View.OnClickListener() {
