@@ -43,6 +43,7 @@ public class HomeFragment extends Fragment {
     public class NoteViewHolder extends RecyclerView.ViewHolder {
         private final TextView noteTitle;
         private final TextView noteContent;
+
         LinearLayout notelayout;
 
         public NoteViewHolder(@NonNull View itemView) {
@@ -50,6 +51,8 @@ public class HomeFragment extends Fragment {
             noteTitle = itemView.findViewById(R.id.notetitle);
             noteContent = itemView.findViewById(R.id.notecontent);
             notelayout = itemView.findViewById(R.id.note);
+
+
         }
     }
     @Override
@@ -76,7 +79,9 @@ public class HomeFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull NoteViewHolder holder, int position, firebasemodel model) {
 
-                ImageView popupbutton = holder.itemView.findViewById(R.id.menupopbutton);
+//                ImageView popupbutton = holder.itemView.findViewById(R.id.menupopbutton);
+                ImageView deleteButton = holder.itemView.findViewById(R.id.deleteButton);
+
                 int colorcode = getRandomColor();
                 holder.notelayout.setBackgroundColor(holder.itemView.getResources().getColor(colorcode, null));
                 holder.noteTitle.setText(model.getTitle());
@@ -100,38 +105,54 @@ public class HomeFragment extends Fragment {
                                 .commit();
                     }
                 });
-
-                popupbutton.setOnClickListener(new View.OnClickListener() {
+                deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
-                        popupMenu.setGravity(Gravity.END);
-                        popupMenu.getMenu().add("Edit").setOnMenuItemClickListener(item -> {
-                            EditFragment editFragment = new EditFragment();
-                            Bundle bundle = new Bundle();
-                            bundle.putString("title", model.getTitle());
-                            bundle.putString("content", model.getContent());
-                            bundle.putString("noteId", docId);
-                            editFragment.setArguments(bundle);
-
-                            getParentFragmentManager().beginTransaction()
-                                    .replace(R.id.frameLayout, editFragment)
-                                    .addToBackStack(null)
-                                    .commit();
-                            return false;
+                        // Implement delete functionality here
+                        DocumentReference documentReference = firebaseFirestore.collection("notes")
+                                .document(firebaseUser.getUid())
+                                .collection("myNotes")
+                                .document(docId);
+                        documentReference.delete().addOnSuccessListener(unused -> {
+                            Toast.makeText(view.getContext(), "Note Deleted", Toast.LENGTH_SHORT).show();
+                        }).addOnFailureListener(e -> {
+                            Toast.makeText(view.getContext(), "Failed To Delete", Toast.LENGTH_SHORT).show();
                         });
-                        popupMenu.getMenu().add("Delete").setOnMenuItemClickListener(item -> {
-                            DocumentReference documentReference = firebaseFirestore.collection("notes").document(firebaseUser.getUid()).collection("myNotes").document(docId);
-                            documentReference.delete().addOnSuccessListener(unused -> {
-                                Toast.makeText(view.getContext(), "Note Deleted", Toast.LENGTH_SHORT).show();
-                            }).addOnFailureListener(e -> {
-                                Toast.makeText(view.getContext(), "Failed To Delete", Toast.LENGTH_SHORT).show();
-                            });
-                            return false;
-                        });
-                        popupMenu.show();
                     }
                 });
+
+
+//                popupbutton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+//                        popupMenu.setGravity(Gravity.END);
+//                        popupMenu.getMenu().add("Edit").setOnMenuItemClickListener(item -> {
+//                            EditFragment editFragment = new EditFragment();
+//                            Bundle bundle = new Bundle();
+//                            bundle.putString("title", model.getTitle());
+//                            bundle.putString("content", model.getContent());
+//                            bundle.putString("noteId", docId);
+//                            editFragment.setArguments(bundle);
+//
+//                            getParentFragmentManager().beginTransaction()
+//                                    .replace(R.id.frameLayout, editFragment)
+//                                    .addToBackStack(null)
+//                                    .commit();
+//                            return false;
+//                        });
+//                        popupMenu.getMenu().add("Delete").setOnMenuItemClickListener(item -> {
+//                            DocumentReference documentReference = firebaseFirestore.collection("notes").document(firebaseUser.getUid()).collection("myNotes").document(docId);
+//                            documentReference.delete().addOnSuccessListener(unused -> {
+//                                Toast.makeText(view.getContext(), "Note Deleted", Toast.LENGTH_SHORT).show();
+//                            }).addOnFailureListener(e -> {
+//                                Toast.makeText(view.getContext(), "Failed To Delete", Toast.LENGTH_SHORT).show();
+//                            });
+//                            return false;
+//                        });
+//                        popupMenu.show();
+//                    }
+//                });
             }
 
             @NonNull

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -38,6 +39,8 @@ public class ViewFragment extends Fragment {
                 bundle.putString("content",contentofnoteview.getText().toString());
                 bundle.putString("noteId",getArguments().getString("noteId"));
                 editFragment.setArguments(bundle);
+
+                Toast.makeText(getContext(), "Edit Mode", Toast.LENGTH_SHORT).show();
 
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.frameLayout, editFragment)
