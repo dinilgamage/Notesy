@@ -18,5 +18,6 @@
         <item name="colorSecondary">@color/secondary_dark</item>
         <item name="android:textColor">@color/text_color_dark</item>
         <item name="android:editTextColor">@color/edit_text_color_dark</item>
+        <item name="color">@color/text_color_custom_dark</item>
     </style>
 </resources>

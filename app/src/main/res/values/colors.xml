@@ -14,12 +14,14 @@
     <color name="secondary_light">#235D59</color>
     <color name="edit_text_color_light">#7D7474</color>
     <color name="text_color_light">#FFFFFF</color>
+    <color name="text_color_custom_light">#423D3D</color>
 
     <color name="primary_dark">#404040</color>
     <color name="primary_lighter_dark">#313333</color>
     <color name="secondary_dark">#235D59</color>
     <color name="edit_text_color_dark">#AAA2A2</color>
     <color name="text_color_dark">#FFFFFF</color>
+    <color name="text_color_custom_dark">#DDCDCD</color>
 
 
     <color name="gray">#cdc9c3</color>

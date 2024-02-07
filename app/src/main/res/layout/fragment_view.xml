@@ -16,6 +16,7 @@
         android:background="@drawable/rounded_edittext"
         android:layout_marginHorizontal="15dp"
         android:layout_marginTop="15dp"
+        android:textColor="?attr/color"
         android:id="@+id/titleofnoteview"/>
 
     <TextView
@@ -28,6 +29,7 @@
         android:fontFamily="@font/poppins_semibold"
         android:gravity="top|left"
         android:padding="12dp"
+        android:textColor="?attr/color"
         android:textSize="15sp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
