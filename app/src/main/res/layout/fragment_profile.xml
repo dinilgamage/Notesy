@@ -63,5 +63,30 @@
             android:layout_marginTop="25dp"
             android:background="@drawable/rounded_btn" />
 
+        <!-- TextViews for displaying counts -->
+        <TextView
+            android:id="@+id/notesCountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:fontFamily="@font/poppins_regular"
+            app:layout_constraintTop_toBottomOf="@id/logoutButton"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="25dp"
+            android:text="Notes: 0" />
+
+        <TextView
+            android:id="@+id/wordsCountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:fontFamily="@font/poppins_regular"
+            app:layout_constraintTop_toBottomOf="@id/notesCountTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="10dp"
+            android:text="Words: 0" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

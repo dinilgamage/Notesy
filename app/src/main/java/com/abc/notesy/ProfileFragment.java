@@ -64,6 +64,8 @@ public class ProfileFragment extends Fragment {
     private ImageView profileImageView;
     private Uri imageUri;
     private Dialog loadingDialog;
+    private TextView notesCountTextView;
+    private TextView wordsCountTextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,10 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        notesCountTextView = view.findViewById(R.id.notesCountTextView);
+        wordsCountTextView = view.findViewById(R.id.wordsCountTextView);
+
 
         Calendar calendar = Calendar.getInstance();
         int timeOfDay = calendar.get(Calendar.HOUR_OF_DAY);
@@ -133,7 +139,41 @@ public class ProfileFragment extends Fragment {
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(profileImageView);
         loadProfileImage();
+        fetchNotesAndWordsCount();
     }
+    private void fetchNotesAndWordsCount() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("notes")
+                .document(currentUser.getUid())
+                .collection("myNotes")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    int notesCount = queryDocumentSnapshots.size();
+                    notesCountTextView.setText("Notes: " + notesCount);
+
+                    int wordsCount = 0;
+                    for (DocumentSnapshot document : queryDocumentSnapshots) {
+                        String noteContent = document.getString("content");
+                        if (noteContent != null) {
+                            wordsCount += countWords(noteContent);
+                        }
+                    }
+                    wordsCountTextView.setText("Words: " + wordsCount);
+                })
+                .addOnFailureListener(e -> Log.e("ProfileFragment", "Error fetching notes and words count", e));
+    }
+
+
+    private int countWords(String text) {
+        if (text == null || text.isEmpty()) {
+            return 0;
+        }
+        return text.trim().split("\\s+").length;
+    }
+
 
     private void showImagePickerOptions() {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
