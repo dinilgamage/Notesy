@@ -108,7 +108,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 firebaseAuth.signOut();
-                Toast.makeText(getActivity(), "Log out successfull", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Logged out", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), Login.class);
                 startActivity(intent);
                 getActivity().finish();
@@ -183,6 +183,7 @@ public class ProfileFragment extends Fragment {
 
 
     private void deleteProfileImage() {
+        showLoadingDialog();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser == null) return;
 
@@ -192,6 +193,7 @@ public class ProfileFragment extends Fragment {
         photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                dismissLoadingDialog();
                 Toast.makeText(getContext(), "Avatar deleted", Toast.LENGTH_SHORT).show();
                 removeImageFromFirestore();
                 Glide.with(requireContext())
