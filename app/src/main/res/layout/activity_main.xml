@@ -26,7 +26,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:background="@color/secondary_dark"
-        app:menu="@menu/bottom_nav_menu"/>
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/primary_lighter"
+        app:itemTextColor="@color/primary_lighter"
+        app:itemTextAppearanceActive="@font/poppins_bold"
+        app:itemIconSize="26dp"
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
