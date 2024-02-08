@@ -26,6 +26,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -37,13 +39,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
@@ -101,30 +106,103 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Glide.with(this)
+                .load(R.drawable.default_profile_pic)
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                .into(profileImageView);
         loadProfileImage();
     }
 
     private void showImagePickerOptions() {
-        String[] options = {"Gallery", "Camera"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Choose from");
-        builder.setItems(options, new DialogInterface.OnClickListener() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userRef = db.collection("users").document(currentUser.getUid());
+
+        userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (i == 0) {
-                    chooseImageFromGallery();
-                } else if (i == 1) {
-                    if (ContextCompat.checkSelfPermission(requireContext(),
-                            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(requireActivity(),
-                                new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-                    } else {
-                        openCamera();
-                    }
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                boolean hasProfileImage = documentSnapshot.exists() && documentSnapshot.getString("profileImageUrl") != null && !documentSnapshot.getString("profileImageUrl").isEmpty();
+                List<String> optionsList = new ArrayList<>(Arrays.asList("Gallery", "Camera"));
+                if (hasProfileImage) {
+                    optionsList.add("Delete profile picture");
                 }
+                String[] options = optionsList.toArray(new String[0]);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setTitle("Choose from");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (i == 0) {
+                            chooseImageFromGallery();
+                        } else if (i == 1) {
+                            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+                            } else {
+                                openCamera();
+                            }
+                        } else if (i == 2 && hasProfileImage) {
+                            deleteProfileImage();
+                        }
+                    }
+                });
+                builder.show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("ProfileFragment", "Error checking for profile image", e);
             }
         });
-        builder.show();
+    }
+
+    private void deleteProfileImage() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        StorageReference photoRef = FirebaseStorage.getInstance().getReference()
+                .child("profileImages/" + currentUser.getUid() + ".jpg");
+
+        photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getContext(), "Profile Image Deleted Successfully", Toast.LENGTH_SHORT).show();
+                removeImageFromFirestore();
+                Glide.with(requireContext())
+                        .load(R.drawable.default_profile_pic)
+                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                        .into(profileImageView);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(getContext(), "Failed to Delete Profile Image", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void removeImageFromFirestore() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userRef = db.collection("users").document(currentUser.getUid());
+
+        userRef.update("profileImageUrl", FieldValue.delete())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("ProfileFragment", "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("ProfileFragment", "Error updating document", e);
+                    }
+                });
     }
 
     private void chooseImageFromGallery() {
@@ -139,16 +217,13 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera();
-            } else {
-                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show();
-            }
+        if (requestCode == REQUEST_CAMERA_PERMISSION && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            openCamera();
+        } else {
+            Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -169,132 +244,104 @@ public class ProfileFragment extends Fragment {
     }
 
     private void uploadImageToFirebase() {
-        showLoadingDialog();
-        if (imageUri != null) {
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference()
-                    .child("profileImages/" + firebaseAuth.getCurrentUser().getUid() + ".jpg");
-            UploadTask uploadTask = storageReference.putFile(imageUri);
-
-            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if (!task.isSuccessful()) {
-                        throw Objects.requireNonNull(task.getException());
-                    }
-                    return storageReference.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    dismissLoadingDialog();
-                    if (task.isSuccessful()) {
-                        // Upload success
-                        Uri downloadUri = task.getResult();
-                        // Save the downloadUri to user's profile data in Firestore
-                        updateProfileImage(downloadUri.toString()).addOnCompleteListener(new OnCompleteListener<String>() {
-                            @Override
-                            public void onComplete(@NonNull Task<String> task) {
-                                if (task.isSuccessful()) {
-                                    // Update the ImageView with the downloaded image
-                                    Glide.with(requireContext()).load(downloadUri).into(profileImageView);
-                                    Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    // Error updating profile image
-                                    Log.e("ProfileFragment", "Failed to update profile image", task.getException());
-                                    Toast.makeText(requireContext(), "Failed to update profile image", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    } else {
-                        // Error uploading image
-                        Log.e("ProfileFragment", "Failed to upload image", task.getException());
-                        Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-
-        } else {
+        if (imageUri == null) {
             Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        showLoadingDialog();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference()
+                .child("profileImages/" + currentUser.getUid() + ".jpg");
+        UploadTask uploadTask = storageReference.putFile(imageUri);
+
+        uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw Objects.requireNonNull(task.getException());
+                }
+                return storageReference.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                dismissLoadingDialog();
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    updateProfileImage(downloadUri.toString()).addOnCompleteListener(new OnCompleteListener<String>() {
+                        @Override
+                        public void onComplete(@NonNull Task<String> task) {
+                            if (task.isSuccessful()) {
+                                Glide.with(requireContext())
+                                        .load(downloadUri)
+                                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                        .into(profileImageView);
+                                Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.e("ProfileFragment", "Failed to update profile image", task.getException());
+                                Toast.makeText(requireContext(), "Failed to update profile image", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    Log.e("ProfileFragment", "Failed to upload image", task.getException());
+                    Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private Task<String> updateProfileImage(String imageUrl) {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        if (currentUser != null) {
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference userRef = db.collection("users").document(currentUser.getUid());
+        if (currentUser == null) return Tasks.forException(new NullPointerException("User is null"));
 
-            // Check if the user profile document exists
-            return userRef.get().continueWithTask(new Continuation<DocumentSnapshot, Task<String>>() {
-                @Override
-                public Task<String> then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            // Update the existing document with the profile image URL
-                            return userRef.update("profileImageUrl", imageUrl)
-                                    .continueWith(new Continuation<Void, String>() {
-                                        @Override
-                                        public String then(@NonNull Task<Void> task) throws Exception {
-                                            if (task.isSuccessful()) {
-                                                return imageUrl;
-                                            } else {
-                                                throw task.getException();
-                                            }
-                                        }
-                                    });
-                        } else {
-                            // Create a new document with the profile image URL
-                            return userRef.set(new UserModel(currentUser.getUid(), imageUrl), SetOptions.merge())
-                                    .continueWith(new Continuation<Void, String>() {
-                                        @Override
-                                        public String then(@NonNull Task<Void> task) throws Exception {
-                                            if (task.isSuccessful()) {
-                                                return imageUrl;
-                                            } else {
-                                                throw task.getException();
-                                            }
-                                        }
-                                    });
-                        }
-                    } else {
-                        throw task.getException();
-                    }
-                }
-            });
-        }
-        return Tasks.forException(new NullPointerException("User is null"));
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userRef = db.collection("users").document(currentUser.getUid());
+
+        return userRef.get().continueWithTask(task -> {
+            if (!task.isSuccessful()) {
+                throw Objects.requireNonNull(task.getException());
+            }
+
+            DocumentSnapshot document = task.getResult();
+            if (document.exists()) {
+                return userRef.update("profileImageUrl", imageUrl)
+                        .continueWith(task12 -> imageUrl);
+            } else {
+                return userRef.set(new UserModel(currentUser.getUid(), imageUrl), SetOptions.merge())
+                        .continueWith(task1 -> imageUrl);
+            }
+        });
     }
 
     private void loadProfileImage() {
         showLoadingDialog();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        if (currentUser != null) {
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference userRef = db.collection("users").document(currentUser.getUid());
+        if (currentUser == null) return;
 
-            userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    dismissLoadingDialog();
-                    if (documentSnapshot.exists()) {
-                        UserModel userModel = documentSnapshot.toObject(UserModel.class);
-                        if (userModel != null && userModel.getProfileImageUrl() != null) {
-                            // Load the profile image using Glide or Picasso
-                            Glide.with(requireContext()).load(userModel.getProfileImageUrl()).into(profileImageView);
-                        } else {
-                            // Use default image if profile image URL is null
-                            profileImageView.setImageResource(R.drawable.login);
-                        }
-                    }
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userRef = db.collection("users").document(currentUser.getUid());
+
+        userRef.get().addOnSuccessListener(documentSnapshot -> {
+            dismissLoadingDialog();
+            if (documentSnapshot.exists()) {
+                UserModel userModel = documentSnapshot.toObject(UserModel.class);
+                if (userModel != null && userModel.getProfileImageUrl() != null) {
+                    Glide.with(requireContext())
+                            .load(userModel.getProfileImageUrl())
+                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                            .into(profileImageView);
+                } else {
+                    Glide.with(requireContext())
+                            .load(R.drawable.default_profile_pic)
+                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                            .into(profileImageView);
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e("ProfileFragment", "Error fetching profile image", e);
-                }
-            });
-        }
+            }
+        }).addOnFailureListener(e -> Log.e("ProfileFragment", "Error fetching profile image", e));
     }
 
     private Uri getImageUri(Context context, Bitmap bitmap) {
@@ -303,6 +350,7 @@ public class ProfileFragment extends Fragment {
         String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, "Title", null);
         return Uri.parse(path);
     }
+
     private void showLoadingDialog() {
         if (loadingDialog != null && !loadingDialog.isShowing()) {
             loadingDialog.show();
@@ -315,4 +363,3 @@ public class ProfileFragment extends Fragment {
         }
     }
 }
-
