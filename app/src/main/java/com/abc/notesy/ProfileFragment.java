@@ -384,6 +384,8 @@ public class ProfileFragment extends Fragment {
     }
 
     private void loadProfileImage() {
+        if (!isAdded()) return;
+
         showLoadingDialog();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -395,20 +397,25 @@ public class ProfileFragment extends Fragment {
             dismissLoadingDialog();
             if (documentSnapshot.exists()) {
                 UserModel userModel = documentSnapshot.toObject(UserModel.class);
-                if (userModel != null && userModel.getProfileImageUrl() != null) {
-                    Glide.with(requireContext())
+                if (userModel != null && userModel.getProfileImageUrl() != null && getContext() != null) {
+                    Glide.with(getContext())
                             .load(userModel.getProfileImageUrl())
                             .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                             .into(profileImageView);
-                } else {
-                    Glide.with(requireContext())
+                } else if (getContext() != null) {
+                    Glide.with(getContext())
                             .load(R.drawable.default_profile_pic)
                             .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                             .into(profileImageView);
                 }
             }
-        }).addOnFailureListener(e -> Log.e("ProfileFragment", "Error fetching profile image", e));
+        }).addOnFailureListener(e -> {
+            if (isAdded()) {
+                Log.e("ProfileFragment", "Error fetching profile image", e);
+            }
+        });
     }
+
 
     private Uri getImageUri(Context context, Bitmap bitmap) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
