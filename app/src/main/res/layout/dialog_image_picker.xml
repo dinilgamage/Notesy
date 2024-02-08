@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="?attr/colorPrimary">
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="?attr/color"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/poppins_bold"
+        android:text="Choose an option" />
+
+    <Button
+        android:id="@+id/button_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Gallery"
+        android:drawablePadding="10dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="?attr/color" />
+
+    <Button
+        android:id="@+id/button_camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Camera"
+        android:drawablePadding="10dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="?attr/color" />
+
+    <Button
+        android:id="@+id/button_delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete profile picture"
+        android:drawablePadding="10dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="@color/red"
+        android:visibility="gone"/>
+
+</LinearLayout>

@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -48,6 +49,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -74,6 +76,29 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        // Get the current time of day
+        Calendar calendar = Calendar.getInstance();
+        int timeOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+
+        // Set the greeting message based on the time of day
+        String greeting;
+        if (timeOfDay >= 0 && timeOfDay < 12) {
+            greeting = "Good Morning";
+        } else if (timeOfDay >= 12 && timeOfDay < 18) {
+            greeting = "Good Afternoon";
+        } else {
+            greeting = "Good Evening";
+        }
+
+        // Set the greeting message
+        TextView greetingTextView = view.findViewById(R.id.greetingTextView);
+        greetingTextView.setText("Hey there! " + greeting);
+
+        TextView emailTextView = view.findViewById(R.id.emailTextView);
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        String email = currentUser != null ? currentUser.getEmail() : "";
+        emailTextView.setText("You are logged in as: " + email);
+
         logoutButton = view.findViewById(R.id.logoutButton);
         profileImageView = view.findViewById(R.id.profileImageView);
 
@@ -86,7 +111,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 firebaseAuth.signOut();
-                Toast.makeText(getActivity(), "Logged Out Successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Log out successfull", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), Login.class);
                 startActivity(intent);
                 getActivity().finish();
@@ -120,43 +145,45 @@ public class ProfileFragment extends Fragment {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference userRef = db.collection("users").document(currentUser.getUid());
 
-        userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                boolean hasProfileImage = documentSnapshot.exists() && documentSnapshot.getString("profileImageUrl") != null && !documentSnapshot.getString("profileImageUrl").isEmpty();
-                List<String> optionsList = new ArrayList<>(Arrays.asList("Gallery", "Camera"));
-                if (hasProfileImage) {
-                    optionsList.add("Delete profile picture");
-                }
-                String[] options = optionsList.toArray(new String[0]);
+        userRef.get().addOnSuccessListener(documentSnapshot -> {
+            boolean hasProfileImage = documentSnapshot.exists() && documentSnapshot.getString("profileImageUrl") != null && !documentSnapshot.getString("profileImageUrl").isEmpty();
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                builder.setTitle("Choose from");
-                builder.setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (i == 0) {
-                            chooseImageFromGallery();
-                        } else if (i == 1) {
-                            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-                            } else {
-                                openCamera();
-                            }
-                        } else if (i == 2 && hasProfileImage) {
-                            deleteProfileImage();
-                        }
-                    }
-                });
-                builder.show();
+            final Dialog dialog = new Dialog(requireContext());
+            dialog.setContentView(R.layout.dialog_image_picker);
+
+            Button buttonGallery = dialog.findViewById(R.id.button_gallery);
+            Button buttonCamera = dialog.findViewById(R.id.button_camera);
+            Button buttonDelete = dialog.findViewById(R.id.button_delete);
+
+            if (hasProfileImage) {
+                buttonDelete.setVisibility(View.VISIBLE);
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("ProfileFragment", "Error checking for profile image", e);
-            }
-        });
+
+            buttonGallery.setOnClickListener(v -> {
+                chooseImageFromGallery();
+                dialog.dismiss();
+            });
+
+            buttonCamera.setOnClickListener(v -> {
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+                } else {
+                    openCamera();
+                }
+                dialog.dismiss();
+            });
+
+            buttonDelete.setOnClickListener(v -> {
+                if (hasProfileImage) {
+                    deleteProfileImage();
+                }
+                dialog.dismiss();
+            });
+
+            dialog.show();
+        }).addOnFailureListener(e -> Log.e("ProfileFragment", "Error checking for profile image", e));
     }
+
 
     private void deleteProfileImage() {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -168,7 +195,7 @@ public class ProfileFragment extends Fragment {
         photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Toast.makeText(getContext(), "Profile Image Deleted Successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Avatar deleted", Toast.LENGTH_SHORT).show();
                 removeImageFromFirestore();
                 Glide.with(requireContext())
                         .load(R.drawable.default_profile_pic)
@@ -279,7 +306,7 @@ public class ProfileFragment extends Fragment {
                                         .load(downloadUri)
                                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                                         .into(profileImageView);
-                                Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), "Avatar updated", Toast.LENGTH_SHORT).show();
                             } else {
                                 Log.e("ProfileFragment", "Failed to update profile image", task.getException());
                                 Toast.makeText(requireContext(), "Failed to update profile image", Toast.LENGTH_SHORT).show();
