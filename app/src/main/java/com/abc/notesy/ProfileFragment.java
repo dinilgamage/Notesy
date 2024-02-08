@@ -76,11 +76,9 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        // Get the current time of day
         Calendar calendar = Calendar.getInstance();
         int timeOfDay = calendar.get(Calendar.HOUR_OF_DAY);
 
-        // Set the greeting message based on the time of day
         String greeting;
         if (timeOfDay >= 0 && timeOfDay < 12) {
             greeting = "Good Morning";
@@ -90,7 +88,6 @@ public class ProfileFragment extends Fragment {
             greeting = "Good Evening";
         }
 
-        // Set the greeting message
         TextView greetingTextView = view.findViewById(R.id.greetingTextView);
         greetingTextView.setText("Hey there! " + greeting);
 
