@@ -8,7 +8,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="35dp"
+        android:padding="30dp"
         android:background="?attr/colorPrimary">
 
         <TextView
@@ -21,8 +21,6 @@
             android:layout_marginBottom="16dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="5dp"
             android:text="Hey there!"/>
 
         <TextView
@@ -34,21 +32,83 @@
             android:textSize="12sp"
             app:layout_constraintTop_toBottomOf="@id/greetingTextView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="5dp"/>
 
-        <ImageView
-            android:id="@+id/profileImageView"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:src="@drawable/default_profile_pic"
-            android:scaleType="centerCrop"
+        <LinearLayout
+            android:id="@+id/profileLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/emailTextView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="25dp"
-            android:clickable="true"
-            android:onClick="onProfileImageClick" />
+            android:layout_marginTop="25dp">
+
+            <ImageView
+                android:id="@+id/profileImageView"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/default_profile_pic"
+                android:scaleType="centerCrop"
+                android:clickable="true"
+                android:onClick="onProfileImageClick" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="30dp">
+
+                <TextView
+                    android:id="@+id/notesCountTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:layout_gravity="center"
+                    android:textSize="38sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="0" />
+                <TextView
+                    android:id="@+id/notesCountDescView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Notes" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="15dp"
+
+
+                android:layout_marginStart="28dp"
+                >
+
+                <TextView
+                    android:id="@+id/wordsCountTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="38sp"
+                    android:layout_gravity="center"
+
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="0" />
+                <TextView
+                    android:id="@+id/wordsCountDescView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Words" />
+            </LinearLayout>
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/logoutButton"
@@ -57,36 +117,11 @@
             android:text="Logout"
             android:textColor="#FFFFFF"
             android:fontFamily="@font/poppins_semibold"
-            app:layout_constraintTop_toBottomOf="@id/profileImageView"
+            app:layout_constraintTop_toBottomOf="@id/profileLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="25dp"
             android:background="@drawable/rounded_btn" />
-
-        <!-- TextViews for displaying counts -->
-        <TextView
-            android:id="@+id/notesCountTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:fontFamily="@font/poppins_regular"
-            app:layout_constraintTop_toBottomOf="@id/logoutButton"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="25dp"
-            android:text="Notes: 0" />
-
-        <TextView
-            android:id="@+id/wordsCountTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:fontFamily="@font/poppins_regular"
-            app:layout_constraintTop_toBottomOf="@id/notesCountTextView"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="10dp"
-            android:text="Words: 0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

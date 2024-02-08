@@ -152,7 +152,7 @@ public class ProfileFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     int notesCount = queryDocumentSnapshots.size();
-                    notesCountTextView.setText("Notes: " + notesCount);
+                    notesCountTextView.setText("" + notesCount);
 
                     int wordsCount = 0;
                     for (DocumentSnapshot document : queryDocumentSnapshots) {
@@ -161,7 +161,7 @@ public class ProfileFragment extends Fragment {
                             wordsCount += countWords(noteContent);
                         }
                     }
-                    wordsCountTextView.setText("Words: " + wordsCount);
+                    wordsCountTextView.setText("" + wordsCount);
                 })
                 .addOnFailureListener(e -> Log.e("ProfileFragment", "Error fetching notes and words count", e));
     }
