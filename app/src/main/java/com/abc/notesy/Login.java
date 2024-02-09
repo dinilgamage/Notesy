@@ -30,7 +30,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class Login extends AppCompatActivity {
+public class Login extends BaseActivity {
 
     private EditText mloginemail, mloginpassword;
     private Button mloginbutton, mgooglesigninbutton;

@@ -31,7 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class Register extends AppCompatActivity {
+public class Register extends BaseActivity {
 
     private EditText mregisteremail,mregisterpassword,mregisterconfirmpassword;
     private Button mregisterbutton, mgooglesigninbutton;

@@ -13,7 +13,7 @@ import android.view.Window;
 
 import com.abc.notesy.databinding.ActivityMainBinding;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     ActivityMainBinding binding;
 
