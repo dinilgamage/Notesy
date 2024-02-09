@@ -38,15 +38,15 @@ public class BaseActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Not used here
+
     }
 
     private void adjustScreenBrightnessBasedOnAmbientLight(float lightLevel) {
         float brightnessValue;
-        if (lightLevel < 500) {
-            brightnessValue = 0.1f + ((lightLevel / 500) * 0.5f);
+        if (lightLevel < 100) {
+            brightnessValue = 0.1f + ((lightLevel / 100) * 0.5f);
         } else {
-            brightnessValue = 0.6f + ((Math.min(lightLevel, 5000) - 500) / 4000) * 0.4f;
+            brightnessValue = 0.6f + ((Math.min(lightLevel, 5000) - 100) / 4000) * 0.4f;
         }
         adjustScreenBrightness(brightnessValue);
     }
