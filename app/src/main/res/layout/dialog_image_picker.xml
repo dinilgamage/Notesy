@@ -39,7 +39,7 @@
         android:id="@+id/button_delete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Delete profile picture"
+        android:text="Delete Avatar"
         android:drawablePadding="10dp"
         android:background="?android:attr/selectableItemBackground"
         android:textColor="@color/red"
