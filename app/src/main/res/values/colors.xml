@@ -25,14 +25,15 @@
     <color name="text_color_custom_dark">#DDCDCD</color>
 
 
-    <color name="gray">#cdc9c3</color>
-    <color name="green">#c6ebc9</color>
-    <color name="lightgreen">#cfffa5</color>
-    <color name="skyblue">#a7c5eb</color>
-    <color name="pink">#f3e6e3</color>
-    <color name="color1">#efbbc4</color>
-    <color name="color2">#d6b0b1</color>
-    <color name="color3">#ccf6c9</color>
-    <color name="color4">#ffe0ac</color>
-    <color name="color5">#e5cfe5</color>
+    <color name="gray">#bfbfbf</color>
+    <color name="green">#9de3b7</color>
+    <color name="lightgreen">#d1ff94</color>
+    <color name="skyblue">#87ceeb</color>
+    <color name="pink">#ffd1dc</color>
+    <color name="color1">#ff9eb6</color>
+    <color name="color2">#f7afad</color>
+    <color name="color3">#a0e6a3</color>
+    <color name="color4">#ffd699</color>
+    <color name="color5">#e8b3e6</color>
+
 </resources>
