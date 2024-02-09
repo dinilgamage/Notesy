@@ -43,10 +43,10 @@ public class BaseActivity extends AppCompatActivity implements SensorEventListen
 
     private void adjustScreenBrightnessBasedOnAmbientLight(float lightLevel) {
         float brightnessValue;
-        if (lightLevel < 300) {
-            brightnessValue = 0.1f + ((lightLevel / 300) * 0.4f);
+        if (lightLevel < 500) {
+            brightnessValue = 0.1f + ((lightLevel / 500) * 0.5f);
         } else {
-            brightnessValue = 0.3f + ((Math.min(lightLevel, 5000) - 300) / 4000) * 0.7f;
+            brightnessValue = 0.6f + ((Math.min(lightLevel, 5000) - 500) / 4000) * 0.4f;
         }
         adjustScreenBrightness(brightnessValue);
     }
