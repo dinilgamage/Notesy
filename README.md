@@ -76,5 +76,4 @@ Here, the user can manage their profile by uploading, changing, or deleting thei
     <img src="https://github.com/dinilgamage/Notesy/assets/113094888/f4f5e7da-f51d-4c24-ac27-6520e25e4921" alt="Edit Note Screen 2" style="width: 45%;">
 </div>
 
-![image]()
 
