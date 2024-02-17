@@ -65,12 +65,16 @@ Here, the user can manage their profile by uploading, changing, or deleting thei
 
 ### View Note
 <div style="display: flex; justify-content: space-around;">
-    <img src="https://github.com/dinilgamage/Notesy/assets/113094888/3d05c2ea-485a-4887-b7c9-250a85de6d52" alt="View Note Screen 1" style="width: 45%;">
-    <img src="https://github.com/dinilgamage/Notesy/assets/113094888/b388cf04-f275-41e5-8f5d-75cce508f739" alt="View Note Screen 2" style="width: 45%;">
+    <img src="https://github.com/dinilgamage/Notesy/assets/113094888/c6f7f564-8815-40e2-a573-be15e8ded204" alt="View Note Screen 3" style="width: 45%;">
+    <img src="https://github.com/dinilgamage/Notesy/assets/113094888/ffd97304-816d-4774-9b79-df449c495db3" alt="View Note Screen 4" style="width: 45%;">
 </div>
+
 
 ### Edit Note
 <div style="display: flex; justify-content: space-around;">
-    <img src="https://github.com/dinilgamage/Notesy/assets/113094888/f36e1518-affe-4435-8447-02ea07e5cbea" alt="Edit Note Screen 1" style="width: 45%;">
-    <img src="https://github.com/dinilgamage/Notesy/assets/113094888/45545c10-a7e3-44ef-9dee-6a06c0d1d85d" alt="Edit Note Screen 2" style="width: 45%;">
+    <img src="https://github.com/dinilgamage/Notesy/assets/113094888/f099af50-257a-48a3-b456-789e7998e7de" alt="Edit Note Screen 1" style="width: 45%;">
+    <img src="https://github.com/dinilgamage/Notesy/assets/113094888/f4f5e7da-f51d-4c24-ac27-6520e25e4921" alt="Edit Note Screen 2" style="width: 45%;">
 </div>
+
+![image]()
+
