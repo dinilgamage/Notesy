@@ -19,6 +19,43 @@ Notesy is a sleek and intuitive note-taking app that keeps things simple, minima
 3. Dark and Light mode - Choose your desired theme
 4. Configured app manifest with custom icons - Notesy specific icons throughout the application
 
+## Installation Guide
+
+### Set up Android Studio
+If you haven't already, [download and set up Android Studio](https://developer.android.com/studio) on your computer.
+
+To install and run the Notesy app in Android Studio, follow these steps:
+
+1. **Clone the Repository:**
+   - Clone the repository using Git by running the following command in your terminal or Git Bash:
+     ```bash
+     git clone https://github.com/dinilgamage/Notesy.git
+     ```
+
+2. **Open Project in Android Studio:**
+   - Open Android Studio and select "Open an existing Android Studio project."
+   - Navigate to the directory where you cloned the repository and select the `Notesy` folder.
+   - Wait for Android Studio to import the project and sync the Gradle files. This process may take some time, as Android Studio downloads any missing dependencies and prepares the project for building.
+   - Once the Gradle sync is complete, you should see the project structure in the Android Studio project explorer.
+
+3. **Build and Run the App:**
+   - Build the project by clicking on the "Build" menu in Android Studio and selecting "Make Project."
+   - Connect your Android device to your computer using a USB cable or start an Android emulator.
+   - Select your connected device from the list of available devices and click "OK."
+   - Click on the green play button (Run 'app') in the Android Studio toolbar.
+   - Android Studio will install the app on the selected device and launch it.
+
+4. **Test Ambient Light Sensor (Optional):**
+   - If you want to test the ambient light sensor feature, ensure your device supports this sensor and that it's enabled in the device settings.
+
+5. **Interact with the App:**
+   - Use the app to create notes, manage your profile, and explore its various features.
+
+6. **Stop the App:**
+   - To stop the app, click on the square stop button in the Android Studio toolbar.
+
+By following these steps, you should be able to install and run the Notesy app on your Android device, allowing you to test its functionality and user interface.
+
 ## Screens
 
 ### Login
